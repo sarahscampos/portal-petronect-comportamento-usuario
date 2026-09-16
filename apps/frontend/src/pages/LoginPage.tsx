@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Server, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSession } from "@/contexts/SessionContext";
-import { api } from "@/lib/api";
+import { api, API_URL } from "@/lib/api";
 import { loginFormSchema, roles, type LoginFormValues } from "@/schemas/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,11 +31,11 @@ export function LoginPage() {
     watch,
     formState: { errors }
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+    resolver: zodResolver(loginFormSchema as any),
     defaultValues: {
       cnpj: "12.345.678/0001-95",
-      role: "Comercial"
-    }
+      role: "Comprador",
+    },
   });
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export function LoginPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
-                      <SelectItem key={role} value={role}>
+                      <SelectItem key={role} value={String(role)}>
                         {role}
                       </SelectItem>
                     ))}
@@ -124,7 +124,7 @@ export function LoginPage() {
                   }`}
                 />
                 {backendStatus === "online"
-                  ? "Backend conectado em http://localhost:3001"
+                  ? `Backend conectado em ${API_URL}`
                   : backendStatus === "offline"
                     ? "Backend offline. Inicie a API antes do frontend."
                     : "Verificando backend..."}
